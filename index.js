@@ -1,13 +1,5 @@
-const express = require('express')
-
-const app = express()
-
-app.set('view engine', 'pug')
+const app = require('./app')
 
 app.listen(3000, () => {
   console.log('Server listening.')
-})
-
-app.get('/', (req, res, next) => {
-  res.render('index')
 })
