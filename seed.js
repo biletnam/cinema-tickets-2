@@ -1,8 +1,10 @@
-const SeatModel = require('./models/seat-model')
 const mongoose = require('mongoose')
+
+const SeatModel = require('./models/seat-model')
+const UserModel = require('./models/user-model')
 require('./database-connection')
 
-const seedSeats = () => {
+const seedSeats = async () => {
   const seats = [
     {category: '1', row: 1, seat: 1},
     {category: '1', row: 1, seat: 2},
@@ -18,21 +20,32 @@ const seedSeats = () => {
     {category: '2', row: 4, seat: 3}
   ]
 
-  seats.forEach((seat) => {
-    const newSeat = new SeatModel(seat)
-    newSeat.save()
-  })
+  for (let seat of seats) {
+    await SeatModel.create(seat)
+  }
 }
 
-const seed = () => {
-  seedSeats()
+const seedUsers = async () => {
+  const users = [
+    {fullName: 'John Smith', funds: 300},
+    {fullName: 'Max Mustermann', funds: 300}
+  ]
+
+  for (let user of users) {
+    await UserModel.create(user)
+  }
 }
 
-mongoose.connection.on('connected', () => {
+const seed = async () => {
+  await seedSeats()
+  await seedUsers()
+}
+
+mongoose.connection.on('connected', async () => {
   console.log('Dropping database')
-  mongoose.connection.db.dropDatabase()
+  await mongoose.connection.db.dropDatabase()
   console.log('Seeding')
-  seed()
+  await seed()
   console.log('Finished')
   process.exit()
 })

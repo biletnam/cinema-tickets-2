@@ -1,15 +1,10 @@
 const test = require('ava')
 const request = require('supertest')
-const mongoose = require('mongoose')
+// const mongoose = require('mongoose')
 
 const app = require('../app')
 const SeatModel = require('../models/seat-model')
-
-test.beforeEach(async t => {
-  await mongoose.connection.on('connected', () => {
-    mongoose.connection.db.dropDatabase()
-  })
-})
+const UserModel = require('../models/user-model')
 
 test('GET /seats', async t => {
   await SeatModel.create({category: '1', row: 1, seat: 1})
@@ -20,5 +15,29 @@ test('GET /seats', async t => {
 
   t.is(res.status, 200)
   t.true(Array.isArray(res.body), 'Body should be an array')
-  t.true(res.body.length === 2)
+  t.true(res.body.length > 1)
+})
+
+test('Get /users', async t => {
+  await UserModel.create({fullName: 'John Smith', funds: 300})
+  await UserModel.create({fullName: 'Barbara Johnson', funds: 300})
+
+  const res = await request(app)
+    .get('/users')
+
+  t.is(res.status, 200)
+  t.true(Array.isArray(res.body), 'Body should be an array')
+  t.true(res.body.length > 1)
+})
+
+test('POST /seats/:id/book', async t => {
+  const seat = await SeatModel.create({category: '1', row: 1, seat: 1})
+  const user = await UserModel.create({fullName: 'John Smith', funds: 300})
+
+  const res = await request(app)
+    .post(`/seats/${seat.id}/book`)
+    .send({userId: user.id})
+
+  t.is(res.status, 200)
+  t.true(res.body.status === 'booked', 'Status should be "Booked"')
 })

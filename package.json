@@ -4,7 +4,7 @@
   "description": "Application for buying cinema tickets.",
   "main": "index.js",
   "scripts": {
-    "test": "ava",
+    "test": "ava --fail-fast",
     "seed": "node seed.js"
   },
   "author": "Maria Ovsyannikova <xella.design@gmail.com>",

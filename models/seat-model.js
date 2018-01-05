@@ -15,6 +15,16 @@ const SeatSchema = mongoose.Schema({
     type: Number,
     required: true,
     min: 1
+  },
+  status: {
+    type: String,
+    enum: ['free', 'reserved', 'booked'],
+    required: true,
+    default: 'free'
+  },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
   }
 })
 
