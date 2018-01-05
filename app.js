@@ -3,6 +3,7 @@ const bodyParser = require('body-parser')
 
 const SeatModel = require('./models/seat-model')
 const UserModel = require('./models/user-model')
+const SeatService = require('./services/seats')
 require('./database-connection')
 
 const app = express()
@@ -23,15 +24,11 @@ app.post('/seats/:id/book', async (req, res, next) => {
   const userId = req.body.userId
   const seatId = req.params.id
   try {
-    const seat = await SeatModel.findById(seatId)
-    seat.set({'status': 'booked', 'owner': userId})
-    const result = await seat.save()
-    res.send(result)
+    const bookingResult = await SeatService.book(seatId, userId)
+    res.status(bookingResult.status).send(bookingResult.result)
   } catch (err) {
     next(err)
   }
 })
 
 module.exports = app
-
-// 5a4f7ce9a62db73aa917a9c3   5a4f7ceba62db73aa917a9cf

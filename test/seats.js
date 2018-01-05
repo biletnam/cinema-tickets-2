@@ -30,7 +30,7 @@ test('Get /users', async t => {
   t.true(res.body.length > 1)
 })
 
-test('POST /seats/:id/book', async t => {
+test('POST /seats/:id/book successful', async t => {
   const seat = await SeatModel.create({category: '1', row: 1, seat: 1})
   const user = await UserModel.create({fullName: 'John Smith', funds: 300})
 
@@ -40,4 +40,15 @@ test('POST /seats/:id/book', async t => {
 
   t.is(res.status, 200)
   t.true(res.body.status === 'booked', 'Status should be "Booked"')
+})
+
+test('POST /seats/:id/book unsuccessful', async t => {
+  const seat = await SeatModel.create({category: '1', row: 1, seat: 1})
+  const user = await UserModel.create({fullName: 'John Smith', funds: 50})
+
+  const res = await request(app)
+    .post(`/seats/${seat.id}/book`)
+    .send({userId: user.id})
+
+  t.is(res.status, 412)
 })
