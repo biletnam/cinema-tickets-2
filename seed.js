@@ -7,17 +7,17 @@ require('./database-connection')
 const seedSeats = async () => {
   const seats = [
     {category: '1', row: 1, seat: 1},
-    {category: '1', row: 1, seat: 2},
-    {category: '1', row: 1, seat: 3},
-    {category: '1', row: 2, seat: 1},
-    {category: '1', row: 2, seat: 2},
-    {category: '1', row: 2, seat: 3},
-    {category: '2', row: 3, seat: 1},
-    {category: '2', row: 3, seat: 2},
-    {category: '2', row: 3, seat: 3},
-    {category: '2', row: 4, seat: 1},
-    {category: '2', row: 4, seat: 2},
-    {category: '2', row: 4, seat: 3}
+    {category: '1', row: 1, seat: 2}
+    // {category: '1', row: 1, seat: 3},
+    // {category: '1', row: 2, seat: 1},
+    // {category: '1', row: 2, seat: 2},
+    // {category: '1', row: 2, seat: 3},
+    // {category: '2', row: 3, seat: 1},
+    // {category: '2', row: 3, seat: 2},
+    // {category: '2', row: 3, seat: 3},
+    // {category: '2', row: 4, seat: 1},
+    // {category: '2', row: 4, seat: 2},
+    // {category: '2', row: 4, seat: 3}
   ]
 
   for (let seat of seats) {
