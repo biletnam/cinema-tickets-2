@@ -29,9 +29,42 @@ test('Get /users', async t => {
   t.true(res.body.length > 1)
 })
 
+test('POST /seats/:id/reserve successful', async t => {
+  const seat = await SeatModel.create({category: '1', row: 1, seat: 1})
+  const user = await UserModel.create({fullName: 'John Smith', funds: 300})
+
+  const res = await request(app)
+    .post(`/seats/${seat.id}/reserve`)
+    .send({userId: user.id})
+
+  t.is(res.status, 200)
+  t.true(res.body.status === 'reserved', 'Status should be "Reserved"')
+})
+
+test('POST /seats/:id/reserve two users reserving one seat', async t => {
+  const seat = await SeatModel.create({category: '1', row: 1, seat: 1})
+  const user1 = await UserModel.create({fullName: 'John Smith', funds: 300})
+  const user2 = await UserModel.create({fullName: 'Martin Woods', funds: 300})
+
+  const res1 = await request(app)
+    .post(`/seats/${seat.id}/reserve`)
+    .send({userId: user1.id})
+
+  const res2 = await request(app)
+    .post(`/seats/${seat.id}/reserve`)
+    .send({userId: user2.id})
+
+  t.is(res1.status, 200)
+  t.is(res2.status, 412)
+})
+
 test('POST /seats/:id/book successful', async t => {
   const seat = await SeatModel.create({category: '1', row: 1, seat: 1})
   const user = await UserModel.create({fullName: 'John Smith', funds: 300})
+
+  await request(app)
+    .post(`/seats/${seat.id}/reserve`)
+    .send({userId: user.id})
 
   const res = await request(app)
     .post(`/seats/${seat.id}/book`)
@@ -41,30 +74,17 @@ test('POST /seats/:id/book successful', async t => {
   t.true(res.body.status === 'booked', 'Status should be "Booked"')
 })
 
-test('POST /seats/:id/book unsuccessful', async t => {
+test('POST /seats/:id/book with insufficient funds', async t => {
   const seat = await SeatModel.create({category: '1', row: 1, seat: 1})
   const user = await UserModel.create({fullName: 'John Smith', funds: 50})
+
+  await request(app)
+    .post(`/seats/${seat.id}/reserve`)
+    .send({userId: user.id})
 
   const res = await request(app)
     .post(`/seats/${seat.id}/book`)
     .send({userId: user.id})
 
   t.is(res.status, 412)
-})
-
-test('POST /seats/:id/book two users booking one seat', async t => {
-  const seat = await SeatModel.create({category: '1', row: 1, seat: 1})
-  const user1 = await UserModel.create({fullName: 'John Smith', funds: 300})
-  const user2 = await UserModel.create({fullName: 'Martin Woods', funds: 300})
-
-  const res1 = await request(app)
-    .post(`/seats/${seat.id}/book`)
-    .send({userId: user1.id})
-
-  const res2 = await request(app)
-    .post(`/seats/${seat.id}/book`)
-    .send({userId: user2.id})
-
-  t.is(res1.status, 200)
-  t.is(res2.status, 412)
 })

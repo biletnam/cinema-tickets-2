@@ -31,4 +31,15 @@ app.post('/seats/:id/book', async (req, res, next) => {
   }
 })
 
+app.post('/seats/:id/reserve', async (req, res, next) => {
+  const userId = req.body.userId
+  const seatId = req.params.id
+  try {
+    const reservationResult = await SeatService.reserve(seatId, userId)
+    res.status(reservationResult.status).send(reservationResult.result)
+  } catch (err) {
+    next(err)
+  }
+})
+
 module.exports = app
