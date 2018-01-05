@@ -11,6 +11,9 @@ const book = async (seatId, userId) => {
   if (newFunds < 0) {
     return {status: 412, result: 'You don\'t have enough money'}
   }
+  if (seat.status === 'booked') {
+    return {status: 412, result: 'This seat is unavailable for booking'}
+  }
   user.set({'funds': newFunds})
   await user.save()
   seat.set({'status': 'booked', 'owner': userId})
